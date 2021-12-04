@@ -1,9 +1,13 @@
-const { profile } = require("console");
-const { fstat } = require("fs");
+const fs = require("fs");
 const inquirer = require("inquirer");
-const { generate } = require("rxjs");
-// const fs = require("fs");
-// const generatePage = require("./src/page-template")
+const generatePage = require("./src/page-template")
+
+// const { profile } = require("console");
+// const { fstat } = require("fs");
+
+// const { generate } = require("rxjs");
+
+
 
 // const pageHTML = generatePage(name, github);
  
@@ -36,7 +40,8 @@ const promptUser = () => {
                 if (gitHubUsername) {
                     return true
                 } else {
-                    console.log("Please enter your GitHub Username!")
+                    console.log("Please enter your GitHub Username!");
+                    return false
                 }
             }
         },
@@ -50,13 +55,7 @@ const promptUser = () => {
             type: "input", 
             name: "about", 
             message: "Provide some information about yourself",
-            when: ({confirmAbout }) => {
-                if (confirmAbout) {
-                    return true
-                } else {
-                    return false;
-                }
-            }
+            when: ({confirmAbout }) => confirmAbout
         }
     ]);
 };
@@ -75,11 +74,12 @@ const promptProject = portfolioData => {
         type: "input", 
         name: "name",
         message: "What is the name of your project?",
-        validate: projectName => {
-            if (projectName) {
+        validate: nameInput => {
+            if (nameInput) {
                 return true
             } else {
-                console.log("Please enter your project's name!")
+                console.log("Please enter your project's name!");
+                return false
             }
         }
     },
@@ -87,11 +87,12 @@ const promptProject = portfolioData => {
         type: "input",
         name: "description",
         message: "Provide a description of the project (Required)",
-        validate: projectDescription => {
-            if (projectDescription) {
+        validate: descriptionInput => {
+            if (descriptionInput) {
                 return true
             } else {
-                console.log("Please enter a project description!")
+                console.log("Please enter a project description!");
+                return false
             }
         }
     },
@@ -105,11 +106,12 @@ const promptProject = portfolioData => {
         type: "input",
         name: "link",
         message:"Enter the GitHub link to your project. (Required)",
-        validate: projectLink => {
-            if (projectLink) {
+        validate: linkInput => {
+            if (linkInput) {
                 return true
             } else {
-                console.log("Please provide project link")
+                console.log("Please provide project link");
+                return false
             }
         }
     },
@@ -141,7 +143,6 @@ const promptProject = portfolioData => {
 promptUser()
 .then(promptProject)
 .then(portfolioData => {
-    console.log(portfolioData);
     const pageHTML = generatePage(portfolioData);
     fs.writeFile("./index.html", pageHTML, err => {
         if (err) throw new Error(err);
